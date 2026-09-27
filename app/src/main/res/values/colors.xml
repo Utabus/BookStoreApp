@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Stitch BookStore Primary & Secondary Palette -->
+    <color name="primary">#1E3A8A</color>
+    <color name="primary_dark">#00236F</color>
+    <color name="primary_light">#3B82F6</color>
+    <color name="primary_container">#D3E4FE</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_primary_container">#00164E</color>
+
+    <color name="secondary">#D97706</color>
+    <color name="secondary_light">#FFDCC3</color>
+    <color name="on_secondary">#FFFFFF</color>
+
+    <!-- Canvas & Surfaces -->
+    <color name="background">#F8FAFC</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F1F5F9</color>
+    <color name="border_subtle">#E2E8F0</color>
+    <color name="divider">#E2E8F0</color>
+
+    <!-- Typography Colors -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_muted">#94A3B8</color>
+    <color name="text_hint">#94A3B8</color>
+
+    <!-- Semantic Status Colors -->
+    <color name="status_success">#10B981</color>
+    <color name="status_success_bg">#ECFDF5</color>
+    <color name="status_warning">#F59E0B</color>
+    <color name="status_warning_bg">#FFFBEB</color>
+    <color name="status_error">#EF4444</color>
+    <color name="status_error_bg">#FEF2F2</color>
+    <color name="status_discount">#E11D48</color>
+    <color name="rating_star">#F59E0B</color>
+</resources>
