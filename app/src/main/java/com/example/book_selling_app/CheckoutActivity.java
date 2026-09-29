@@ -3,6 +3,7 @@ package com.example.book_selling_app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +24,10 @@ public class CheckoutActivity extends AppCompatActivity {
     private CheckoutViewModel checkoutViewModel;
     private CartViewModel cartViewModel;
     private SessionManager sessionManager;
+    private double subtotalAmount = 0;
+    private double discountAmount = 0;
     private double totalAmount = 0;
+    private String appliedVoucherCode = "";
     private final NumberFormat currencyFormatter = NumberFormat.getInstance(new Locale("vi", "VN"));
 
     @Override
@@ -37,6 +41,7 @@ public class CheckoutActivity extends AppCompatActivity {
         sessionManager = new SessionManager(this);
 
         binding.btnBack.setOnClickListener(v -> finish());
+        binding.btnApplyVoucher.setOnClickListener(v -> applyVoucher());
         binding.btnConfirmOrder.setOnClickListener(v -> placeOrder());
 
         calculateTotal();
@@ -46,14 +51,75 @@ public class CheckoutActivity extends AppCompatActivity {
         int userId = sessionManager.getUserId();
         cartViewModel.getCartItems(userId).observe(this, resource -> {
             if (resource != null && resource.isSuccess() && resource.data != null) {
-                totalAmount = 0;
+                subtotalAmount = 0;
                 for (CartItem item : resource.data) {
-                    totalAmount += item.getSubtotal();
+                    subtotalAmount += item.getSubtotal();
                 }
-                binding.tvCheckoutSubtotal.setText(currencyFormatter.format(totalAmount) + " đ");
-                binding.tvCheckoutTotal.setText(currencyFormatter.format(totalAmount) + " đ");
+                updatePriceDisplay();
             }
         });
+    }
+
+    private void applyVoucher() {
+        String code = binding.edtVoucherCode.getText() != null
+                ? binding.edtVoucherCode.getText().toString().trim().toUpperCase()
+                : "";
+
+        binding.tilVoucherCode.setError(null);
+
+        if (TextUtils.isEmpty(code)) {
+            binding.tilVoucherCode.setError("Vui lòng nhập mã ưu đãi");
+            return;
+        }
+
+        if (subtotalAmount <= 0) {
+            Toast.makeText(this, "Giỏ hàng đang trống!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        double discount = 0;
+        switch (code) {
+            case "GIAM10":
+                discount = subtotalAmount * 0.10;
+                break;
+            case "GIAM30K":
+                if (subtotalAmount < 100000) {
+                    binding.tilVoucherCode.setError("Đơn hàng tối thiểu 100.000 đ để áp dụng mã này");
+                    return;
+                }
+                discount = 30000;
+                break;
+            case "BOOKLOVER":
+                discount = 20000;
+                break;
+            case "WELCOME50":
+                if (subtotalAmount < 200000) {
+                    binding.tilVoucherCode.setError("Đơn hàng tối thiểu 200.000 đ để áp dụng mã này");
+                    return;
+                }
+                discount = 50000;
+                break;
+            default:
+                binding.tilVoucherCode.setError("Mã giảm giá không tồn tại hoặc đã hết hạn");
+                return;
+        }
+
+        appliedVoucherCode = code;
+        discountAmount = Math.min(discount, subtotalAmount);
+
+        binding.layoutDiscountRow.setVisibility(View.VISIBLE);
+        binding.tvCheckoutDiscount.setText("-" + currencyFormatter.format(discountAmount) + " đ");
+        binding.tvVoucherMessage.setText("✓ Đã áp dụng mã " + appliedVoucherCode + " (-" + currencyFormatter.format(discountAmount) + " đ)");
+        binding.tvVoucherMessage.setTextColor(getColor(R.color.status_success));
+
+        updatePriceDisplay();
+        Toast.makeText(this, "Áp dụng mã thành công! Bạn được giảm " + currencyFormatter.format(discountAmount) + " đ", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updatePriceDisplay() {
+        totalAmount = Math.max(0, subtotalAmount - discountAmount);
+        binding.tvCheckoutSubtotal.setText(currencyFormatter.format(subtotalAmount) + " đ");
+        binding.tvCheckoutTotal.setText(currencyFormatter.format(totalAmount) + " đ");
     }
 
     private void placeOrder() {
@@ -72,6 +138,9 @@ public class CheckoutActivity extends AppCompatActivity {
 
         int userId = sessionManager.getUserId();
         String payment = binding.rbCOD.isChecked() ? "COD (Tiền mặt)" : "Chuyển khoản / QR";
+        if (!TextUtils.isEmpty(appliedVoucherCode)) {
+            payment += " [Mã: " + appliedVoucherCode + "]";
+        }
 
         binding.btnConfirmOrder.setEnabled(false);
         checkoutViewModel.createOrder(userId, address, phone, payment, totalAmount).observe(this, resource -> {

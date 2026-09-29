@@ -58,6 +58,16 @@
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             android:visibility="gone"
             app:tint="@color/text_secondary" />
+
+        <ImageButton
+            android:id="@+id/btnBarcodeScan"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Quét mã vạch"
+            android:src="@drawable/ic_barcode_scanner"
+            app:tint="@color/primary" />
     </LinearLayout>
 
     <!-- Empty Search State -->

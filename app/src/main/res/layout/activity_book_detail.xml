@@ -43,9 +43,19 @@
             android:textStyle="bold" />
 
         <ImageButton
+            android:id="@+id/btnFavorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_favorite_border"
+            app:tint="@color/text_primary" />
+
+        <ImageButton
             android:id="@+id/btnCart"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginStart="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@null"
             android:src="@drawable/ic_nav_cart"

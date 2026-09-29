@@ -111,6 +111,12 @@ public class HomeFragment extends Fragment {
             startActivity(new Intent(getContext(), SearchActivity.class));
         });
 
+        binding.btnHomeBarcodeScan.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), SearchActivity.class);
+            intent.putExtra("AUTO_SCAN", true);
+            startActivity(intent);
+        });
+
         binding.btnHeaderCart.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).navigateToTab(R.id.nav_cart);

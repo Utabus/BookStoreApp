@@ -39,4 +39,16 @@ public class BookViewModel extends AndroidViewModel {
     public LiveData<Resource<Boolean>> addToCart(int userId, int bookId, int quantity) {
         return cartRepository.addToCart(userId, bookId, quantity);
     }
+
+    public LiveData<Resource<Boolean>> isBookFavorite(int userId, int bookId) {
+        return bookRepository.isBookFavorite(userId, bookId);
+    }
+
+    public LiveData<Resource<Boolean>> toggleFavorite(int userId, int bookId) {
+        return bookRepository.toggleFavorite(userId, bookId);
+    }
+
+    public LiveData<Resource<List<Book>>> getFavoriteBooks(int userId) {
+        return bookRepository.getFavoriteBooks(userId);
+    }
 }

@@ -73,6 +73,11 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        binding.btnMenuFavorites.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), FavoritesActivity.class);
+            startActivity(intent);
+        });
+
         binding.btnMenuPassword.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), ChangePasswordActivity.class);
             startActivity(intent);

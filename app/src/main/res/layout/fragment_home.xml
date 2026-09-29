@@ -85,6 +85,16 @@
                     android:textSize="@dimen/text_md" />
 
                 <ImageView
+                    android:id="@+id/btnHomeBarcodeScan"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Quét mã vạch"
+                    android:src="@drawable/ic_barcode_scanner"
+                    app:tint="@color/primary" />
+
+                <ImageView
                     android:id="@+id/btnFilter"
                     android:layout_width="20dp"
                     android:layout_height="20dp"

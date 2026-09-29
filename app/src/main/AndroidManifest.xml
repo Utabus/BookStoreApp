@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -59,6 +61,9 @@
             android:exported="false" />
         <activity
             android:name=".WriteReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FavoritesActivity"
             android:exported="false" />
 
         <!-- Customer Profile Activities -->

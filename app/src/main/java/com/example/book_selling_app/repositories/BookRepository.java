@@ -241,4 +241,44 @@ public class BookRepository {
                     // Ignore offline
                 });
     }
+
+    public LiveData<Resource<Boolean>> isBookFavorite(int userId, int bookId) {
+        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
+        appExecutors.diskIO().execute(() -> {
+            try {
+                boolean fav = dbHelper.isBookFavorite(userId, bookId);
+                result.postValue(Resource.success(fav));
+            } catch (Exception e) {
+                result.postValue(Resource.error(e.getMessage(), false));
+            }
+        });
+        return result;
+    }
+
+    public LiveData<Resource<Boolean>> toggleFavorite(int userId, int bookId) {
+        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
+        appExecutors.diskIO().execute(() -> {
+            try {
+                boolean newState = dbHelper.toggleFavorite(userId, bookId);
+                result.postValue(Resource.success(newState));
+            } catch (Exception e) {
+                result.postValue(Resource.error(e.getMessage(), false));
+            }
+        });
+        return result;
+    }
+
+    public LiveData<Resource<List<Book>>> getFavoriteBooks(int userId) {
+        MutableLiveData<Resource<List<Book>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading());
+        appExecutors.diskIO().execute(() -> {
+            try {
+                List<Book> favs = dbHelper.getFavoriteBooks(userId);
+                result.postValue(Resource.success(favs));
+            } catch (Exception e) {
+                result.postValue(Resource.error(e.getMessage(), null));
+            }
+        });
+        return result;
+    }
 }

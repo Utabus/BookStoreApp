@@ -25,6 +25,7 @@ public class BookDetailActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private Book currentBook;
     private int quantity = 1;
+    private boolean isFavorite = false;
     private final NumberFormat currencyFormatter = NumberFormat.getInstance(new Locale("vi", "VN"));
 
     @Override
@@ -45,6 +46,27 @@ public class BookDetailActivity extends AppCompatActivity {
 
         bindBookData();
         setupEvents();
+        checkFavoriteStatus();
+    }
+
+    private void checkFavoriteStatus() {
+        int userId = sessionManager.getUserId();
+        bookViewModel.isBookFavorite(userId, currentBook.getId()).observe(this, resource -> {
+            if (resource != null && resource.isSuccess() && resource.data != null) {
+                isFavorite = resource.data;
+                updateFavoriteIcon();
+            }
+        });
+    }
+
+    private void updateFavoriteIcon() {
+        if (isFavorite) {
+            binding.btnFavorite.setImageResource(R.drawable.ic_favorite_filled);
+            binding.btnFavorite.setColorFilter(getColor(R.color.status_discount));
+        } else {
+            binding.btnFavorite.setImageResource(R.drawable.ic_favorite_border);
+            binding.btnFavorite.setColorFilter(getColor(R.color.text_primary));
+        }
     }
 
     private void bindBookData() {
@@ -75,6 +97,21 @@ public class BookDetailActivity extends AppCompatActivity {
 
     private void setupEvents() {
         binding.btnBack.setOnClickListener(v -> finish());
+
+        binding.btnFavorite.setOnClickListener(v -> {
+            int userId = sessionManager.getUserId();
+            bookViewModel.toggleFavorite(userId, currentBook.getId()).observe(this, resource -> {
+                if (resource != null && resource.isSuccess() && resource.data != null) {
+                    isFavorite = resource.data;
+                    updateFavoriteIcon();
+                    if (isFavorite) {
+                        Toast.makeText(this, "Đã thêm vào danh sách yêu thích ❤️", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Đã xóa khỏi danh sách yêu thích", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        });
 
         binding.btnCart.setOnClickListener(v -> {
             Intent intent = new Intent(BookDetailActivity.this, MainActivity.class);

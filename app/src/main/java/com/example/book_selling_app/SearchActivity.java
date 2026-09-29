@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -14,6 +16,8 @@ import com.example.book_selling_app.adapters.BookAdapter;
 import com.example.book_selling_app.databinding.ActivitySearchBinding;
 import com.example.book_selling_app.models.Book;
 import com.example.book_selling_app.viewmodels.BookViewModel;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +28,7 @@ public class SearchActivity extends AppCompatActivity {
     private BookViewModel bookViewModel;
     private BookAdapter bookAdapter;
     private final List<Book> searchResults = new ArrayList<>();
+    private ActivityResultLauncher<ScanOptions> barcodeLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,17 @@ public class SearchActivity extends AppCompatActivity {
         });
         binding.rvSearchResults.setAdapter(bookAdapter);
 
+        // Barcode Scanner Launcher
+        barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
+            if (result.getContents() != null) {
+                String barcode = result.getContents().trim();
+                binding.edtSearchQuery.setText(barcode);
+                Toast.makeText(this, "Đã quét: " + barcode, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.btnBarcodeScan.setOnClickListener(v -> launchBarcodeScanner());
+
         binding.edtSearchQuery.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -59,8 +75,21 @@ public class SearchActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
+        // Check if auto scan requested
+        if (getIntent().getBooleanExtra("AUTO_SCAN", false)) {
+            launchBarcodeScanner();
+        }
+
         // Initial search to display all books
         searchBooks("");
+    }
+
+    private void launchBarcodeScanner() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Hướng camera về phía mã vạch hoặc mã QR trên sách");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(false);
+        barcodeLauncher.launch(options);
     }
 
     private void searchBooks(String query) {
