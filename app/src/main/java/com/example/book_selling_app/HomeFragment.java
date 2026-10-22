@@ -123,6 +123,12 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        View.OnClickListener openChatListener = v -> {
+            startActivity(new Intent(getContext(), ChatActivity.class));
+        };
+        binding.btnHeaderChat.setOnClickListener(openChatListener);
+        binding.fabHomeChat.setOnClickListener(openChatListener);
+
         binding.tvSeeAllCategories.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).navigateToTab(R.id.nav_categories);

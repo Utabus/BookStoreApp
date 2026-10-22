@@ -178,6 +178,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(AdminDashboardActivity.this, AdminUsersActivity.class));
         });
 
+        binding.cardManageChat.setOnClickListener(v -> {
+            startActivity(new Intent(AdminDashboardActivity.this, AdminChatListActivity.class));
+        });
+
         binding.btnAdminLogout.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
                     .setTitle("Đăng xuất quản trị")

@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
@@ -65,6 +68,10 @@
         <activity
             android:name=".FavoritesActivity"
             android:exported="false" />
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- Customer Profile Activities -->
         <activity
@@ -95,6 +102,9 @@
             android:exported="false" />
         <activity
             android:name=".AdminUsersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminChatListActivity"
             android:exported="false" />
 
     </application>

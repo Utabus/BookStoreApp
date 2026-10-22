@@ -78,6 +78,11 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
+        binding.btnMenuChatSupport.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), ChatActivity.class);
+            startActivity(intent);
+        });
+
         binding.btnMenuPassword.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), ChangePasswordActivity.class);
             startActivity(intent);
