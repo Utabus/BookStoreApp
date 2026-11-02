@@ -1,7 +1,6 @@
 package com.example.book_selling_app.viewmodels;
 
 import android.app.Application;
-import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -35,9 +34,5 @@ public class ChatViewModel extends AndroidViewModel {
 
     public void markMessagesAsRead(String channelId, String currentRole) {
         chatRepository.markMessagesAsRead(channelId, currentRole);
-    }
-
-    public void uploadChatImage(Uri imageUri, ChatRepository.OnImageUploadedListener listener) {
-        chatRepository.uploadChatImage(imageUri, listener);
     }
 }

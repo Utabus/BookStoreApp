@@ -1,7 +1,6 @@
 package com.example.book_selling_app.repositories;
 
 import android.content.Context;
-import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,14 +15,11 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class ChatRepository {
 
@@ -37,18 +33,11 @@ public class ChatRepository {
         void onError(String error);
     }
 
-    public interface OnImageUploadedListener {
-        void onSuccess(String downloadUrl);
-        void onError(String error);
-    }
-
     private final FirebaseFirestore mFirestore;
-    private final FirebaseStorage mStorage;
     private final AppExecutors appExecutors;
 
     public ChatRepository(Context context) {
         this.mFirestore = FirebaseFirestore.getInstance();
-        this.mStorage = FirebaseStorage.getInstance();
         this.appExecutors = AppExecutors.getInstance();
     }
 
@@ -90,7 +79,7 @@ public class ChatRepository {
                     }
                     String snippet = (message.getMessage() != null && !message.getMessage().isEmpty())
                             ? message.getMessage()
-                            : "[Hình ảnh]";
+                            : "";
                     channelMap.put("lastMessage", snippet);
                     channelMap.put("lastTimestamp", message.getTimestamp());
 
@@ -190,27 +179,5 @@ public class ChatRepository {
             resetMap.put("unreadUser", 0);
         }
         channelRef.set(resetMap, SetOptions.merge());
-    }
-
-    public void uploadChatImage(Uri imageUri, OnImageUploadedListener listener) {
-        if (imageUri == null) {
-            if (listener != null) listener.onError("Ảnh không hợp lệ");
-            return;
-        }
-
-        String fileName = "chat_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 8) + ".jpg";
-        StorageReference fileRef = mStorage.getReference().child("chat_images/" + fileName);
-
-        fileRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl()
-                        .addOnSuccessListener(uri -> {
-                            if (listener != null) listener.onSuccess(uri.toString());
-                        })
-                        .addOnFailureListener(e -> {
-                            if (listener != null) listener.onError("Lỗi lấy liên kết ảnh: " + e.getMessage());
-                        }))
-                .addOnFailureListener(e -> {
-                    if (listener != null) listener.onError("Tải ảnh thất bại: " + e.getMessage());
-                });
     }
 }
