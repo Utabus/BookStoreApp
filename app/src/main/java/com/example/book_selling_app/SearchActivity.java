@@ -24,11 +24,15 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
+    public static final String EXTRA_CATEGORY_ID = "EXTRA_CATEGORY_ID";
+    public static final String EXTRA_CATEGORY_NAME = "EXTRA_CATEGORY_NAME";
+
     private ActivitySearchBinding binding;
     private BookViewModel bookViewModel;
     private BookAdapter bookAdapter;
     private final List<Book> searchResults = new ArrayList<>();
     private ActivityResultLauncher<ScanOptions> barcodeLauncher;
+    private Integer selectedCategoryId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,15 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         bookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
+
+        int catId = getIntent().getIntExtra(EXTRA_CATEGORY_ID, -1);
+        if (catId != -1) {
+            selectedCategoryId = catId;
+            String catName = getIntent().getStringExtra(EXTRA_CATEGORY_NAME);
+            if (catName != null && !catName.isEmpty()) {
+                binding.edtSearchQuery.setHint("Tìm kiếm trong " + catName + "...");
+            }
+        }
 
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnClearSearch.setOnClickListener(v -> binding.edtSearchQuery.setText(""));
@@ -80,7 +93,7 @@ public class SearchActivity extends AppCompatActivity {
             launchBarcodeScanner();
         }
 
-        // Initial search to display all books
+        // Initial search to display books
         searchBooks("");
     }
 
@@ -93,7 +106,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void searchBooks(String query) {
-        bookViewModel.searchBooks(query, null, null, null, null, null).observe(this, resource -> {
+        bookViewModel.searchBooks(query, selectedCategoryId, null, null, null, null).observe(this, resource -> {
             if (resource != null && resource.isSuccess() && resource.data != null) {
                 searchResults.clear();
                 searchResults.addAll(resource.data);

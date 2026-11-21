@@ -73,7 +73,11 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        binding.btnMenuFavorites.setOnClickListener(v -> {
+                binding.btnMenuAddressBook.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), AddressListActivity.class);
+            startActivity(intent);
+        });
+binding.btnMenuFavorites.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), FavoritesActivity.class);
             startActivity(intent);
         });

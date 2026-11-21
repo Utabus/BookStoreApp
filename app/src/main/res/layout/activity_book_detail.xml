@@ -64,6 +64,7 @@
 
     <!-- Scrollable Content -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollBookDetail"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -119,14 +120,36 @@
                     android:textSize="@dimen/text_xl"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvDetailAuthor"
-                    android:layout_width="match_parent"
+                <!-- Clickable Author Row -->
+                <LinearLayout
+                    android:id="@+id/layoutAuthorClick"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Tác giả: Paulo Coelho"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="@dimen/text_md" />
+                    android:layout_marginTop="6dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:id="@+id/tvDetailAuthor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tác giả: Paulo Coelho"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_md"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="4dp"
+                        android:contentDescription="@null"
+                        android:rotation="180"
+                        android:src="@drawable/ic_arrow_back"
+                        app:tint="@color/primary" />
+                </LinearLayout>
 
                 <!-- Rating -->
                 <LinearLayout
@@ -294,6 +317,169 @@
                     android:text="Mô tả chi tiết nội dung cuốn sách..."
                     android:textColor="@color/text_secondary"
                     android:textSize="@dimen/text_md" />
+
+            </LinearLayout>
+
+            <!-- Section: Sách cùng tác giả (Books by this Author) -->
+            <LinearLayout
+                android:id="@+id/layoutAuthorBooksSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/surface"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Sách cùng tác giả"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_lg"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnViewAllAuthorBooks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:padding="4dp"
+                        android:text="Xem tất cả &gt;"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_sm"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAuthorRelatedBooks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+            </LinearLayout>
+
+            <!-- Section: Đánh giá & Bình luận (Customer Reviews) -->
+            <LinearLayout
+                android:id="@+id/layoutReviewsSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/surface"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Đánh giá &amp; Nhận xét"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_lg"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnWriteReview"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Viết đánh giá"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_xs"
+                        app:cornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/primary" />
+                </LinearLayout>
+
+                <!-- Rating Overview Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/surface_variant"
+                    app:cardCornerRadius="@dimen/radius_md"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tvOverviewRatingScore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5.0"
+                            android:textColor="@color/text_primary"
+                            android:textSize="32sp"
+                            android:textStyle="bold" />
+
+                        <RatingBar
+                            android:id="@+id/ratingBarOverview"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:isIndicator="true"
+                            android:numStars="5"
+                            android:progressTint="@color/rating_star"
+                            android:rating="5"
+                            android:secondaryProgressTint="@color/rating_star"
+                            android:stepSize="0.5" />
+
+                        <TextView
+                            android:id="@+id/tvOverviewReviewCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Dựa trên 0 nhận xét từ độc giả"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_xs" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Reviews RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBookReviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <!-- Empty State -->
+                <TextView
+                    android:id="@+id/tvEmptyReviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="Chưa có nhận xét nào cho sách này. Hãy là người đầu tiên chia sẻ cảm nhận!"
+                    android:textColor="@color/text_muted"
+                    android:textSize="@dimen/text_sm"
+                    android:visibility="gone" />
 
             </LinearLayout>
 

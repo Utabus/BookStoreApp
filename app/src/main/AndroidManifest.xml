@@ -69,6 +69,15 @@
             android:name=".FavoritesActivity"
             android:exported="false" />
         <activity
+            android:name=".AddressListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddEditAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AuthorBooksActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChatActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

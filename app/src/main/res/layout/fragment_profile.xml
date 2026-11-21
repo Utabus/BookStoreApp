@@ -189,7 +189,49 @@
                     android:layout_marginStart="52dp"
                     android:background="@color/border_subtle" />
 
-                <!-- Favorites / Wishlist -->
+                                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="52dp"
+                    android:background="@color/border_subtle" />
+
+                <!-- Address Book -->
+                <LinearLayout
+                    android:id="@+id/btnMenuAddressBook"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_location"
+                        app:tint="@color/primary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:text="Sổ địa chỉ nhận hàng"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_md" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:contentDescription="@null"
+                        android:rotation="180"
+                        android:src="@drawable/ic_arrow_back"
+                        app:tint="@color/text_muted" />
+                </LinearLayout>
+<!-- Favorites / Wishlist -->
                 <LinearLayout
                     android:id="@+id/btnMenuFavorites"
                     android:layout_width="match_parent"

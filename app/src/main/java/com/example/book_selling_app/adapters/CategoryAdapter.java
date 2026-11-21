@@ -31,6 +31,29 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         this.listener = listener;
     }
 
+    public void setSelectedPosition(int position) {
+        if (position >= 0 && position < getItemCount()) {
+            int oldPos = selectedPosition;
+            selectedPosition = position;
+            notifyItemChanged(oldPos);
+            notifyItemChanged(selectedPosition);
+        }
+    }
+
+    public void setSelectedCategoryId(int categoryId) {
+        if (categories == null) return;
+        for (int i = 0; i < categories.size(); i++) {
+            if (categories.get(i).getId() == categoryId) {
+                setSelectedPosition(i);
+                break;
+            }
+        }
+    }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
+
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -53,12 +76,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         }
 
         holder.itemView.setOnClickListener(v -> {
-            int oldPos = selectedPosition;
-            selectedPosition = holder.getAdapterPosition();
-            notifyItemChanged(oldPos);
-            notifyItemChanged(selectedPosition);
-            if (listener != null) {
-                listener.onCategoryClick(category, selectedPosition);
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && pos < categories.size()) {
+                int oldPos = selectedPosition;
+                selectedPosition = pos;
+                notifyItemChanged(oldPos);
+                notifyItemChanged(selectedPosition);
+                if (listener != null) {
+                    listener.onCategoryClick(categories.get(pos), selectedPosition);
+                }
             }
         });
     }

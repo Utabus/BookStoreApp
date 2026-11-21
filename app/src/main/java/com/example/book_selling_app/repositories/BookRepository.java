@@ -281,4 +281,22 @@ public class BookRepository {
         });
         return result;
     }
+
+    public LiveData<Resource<List<Book>>> getBooksByAuthor(String author, int excludeBookId) {
+        MutableLiveData<Resource<List<Book>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading());
+        appExecutors.diskIO().execute(() -> {
+            try {
+                List<Book> books = dbHelper.getBooksByAuthor(author, excludeBookId);
+                result.postValue(Resource.success(books));
+            } catch (Exception e) {
+                result.postValue(Resource.error("Lỗi khi tải sách cùng tác giả: " + e.getMessage(), null));
+            }
+        });
+        return result;
+    }
+
+    public LiveData<Resource<List<Book>>> getAllBooksByAuthor(String author) {
+        return getBooksByAuthor(author, -1);
+    }
 }

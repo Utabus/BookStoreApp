@@ -63,7 +63,7 @@ public class CategoriesFragment extends Fragment {
 
                 holder.itemView.setOnClickListener(v -> {
                     if (getActivity() instanceof MainActivity) {
-                        ((MainActivity) getActivity()).navigateToTab(R.id.nav_home);
+                        ((MainActivity) getActivity()).navigateToCategory(cat.getId());
                     }
                 });
             }

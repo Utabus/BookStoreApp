@@ -58,14 +58,33 @@
             android:padding="16dp">
 
             <!-- Section: Shipping Address -->
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Địa chỉ nhận hàng"
-                android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_md"
-                android:textStyle="bold" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Địa chỉ nhận hàng"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnPickAddressBook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="4dp"
+                    android:text="Chọn từ sổ địa chỉ &gt;"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/text_xs"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -83,11 +102,11 @@
                     android:padding="14dp">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilShippingAddress"
+                        android:id="@+id/tilReceiverName"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Địa chỉ giao hàng chi tiết"
+                        android:hint="Tên người nhận hàng"
                         app:boxCornerRadiusBottomEnd="@dimen/radius_md"
                         app:boxCornerRadiusBottomStart="@dimen/radius_md"
                         app:boxCornerRadiusTopEnd="@dimen/radius_md"
@@ -95,11 +114,10 @@
                         app:boxStrokeColor="@color/primary">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edtShippingAddress"
+                            android:id="@+id/edtReceiverName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:autofillHints="postalAddress"
-                            android:text="Số 1 Võ Văn Ngân, Phường Linh Chiểu, TP. Thủ Đức"
+                            android:inputType="textPersonName"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/text_md" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -122,8 +140,32 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:autofillHints="phoneNumber"
-                            android:text="0987654321"
                             android:inputType="phone"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_md" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilShippingAddress"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Địa chỉ giao hàng chi tiết"
+                        app:boxCornerRadiusBottomEnd="@dimen/radius_md"
+                        app:boxCornerRadiusBottomStart="@dimen/radius_md"
+                        app:boxCornerRadiusTopEnd="@dimen/radius_md"
+                        app:boxCornerRadiusTopStart="@dimen/radius_md"
+                        app:boxStrokeColor="@color/primary">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edtShippingAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autofillHints="postalAddress"
+                            android:gravity="top"
+                            android:inputType="textMultiLine"
+                            android:lines="2"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/text_md" />
                     </com.google.android.material.textfield.TextInputLayout>

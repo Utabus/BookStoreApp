@@ -6,12 +6,16 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.book_selling_app.databinding.ActivityCheckoutBinding;
+import com.example.book_selling_app.models.Address;
 import com.example.book_selling_app.models.CartItem;
 import com.example.book_selling_app.utils.SessionManager;
+import com.example.book_selling_app.viewmodels.AddressViewModel;
 import com.example.book_selling_app.viewmodels.CartViewModel;
 import com.example.book_selling_app.viewmodels.CheckoutViewModel;
 
@@ -23,12 +27,25 @@ public class CheckoutActivity extends AppCompatActivity {
     private ActivityCheckoutBinding binding;
     private CheckoutViewModel checkoutViewModel;
     private CartViewModel cartViewModel;
+    private AddressViewModel addressViewModel;
     private SessionManager sessionManager;
     private double subtotalAmount = 0;
     private double discountAmount = 0;
     private double totalAmount = 0;
     private String appliedVoucherCode = "";
     private final NumberFormat currencyFormatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+    private final ActivityResultLauncher<Intent> pickAddressLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Address selected = (Address) result.getData().getSerializableExtra(AddressListActivity.RESULT_SELECTED_ADDRESS);
+                    if (selected != null) {
+                        applyAddressToForm(selected);
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +55,44 @@ public class CheckoutActivity extends AppCompatActivity {
 
         checkoutViewModel = new ViewModelProvider(this).get(CheckoutViewModel.class);
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
+        addressViewModel = new ViewModelProvider(this).get(AddressViewModel.class);
         sessionManager = new SessionManager(this);
 
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnApplyVoucher.setOnClickListener(v -> applyVoucher());
         binding.btnConfirmOrder.setOnClickListener(v -> placeOrder());
+        binding.btnPickAddressBook.setOnClickListener(v -> {
+            Intent intent = new Intent(CheckoutActivity.this, AddressListActivity.class);
+            intent.putExtra(AddressListActivity.EXTRA_SELECT_MODE, true);
+            pickAddressLauncher.launch(intent);
+        });
 
+        loadDefaultAddress();
         calculateTotal();
+    }
+
+    private void loadDefaultAddress() {
+        int userId = sessionManager.getUserId();
+        addressViewModel.getDefaultAddress(userId).observe(this, resource -> {
+            if (resource != null && resource.isSuccess() && resource.data != null) {
+                applyAddressToForm(resource.data);
+            } else {
+                // Fallback to user session details
+                binding.edtReceiverName.setText(sessionManager.getUserName());
+            }
+        });
+    }
+
+    private void applyAddressToForm(Address address) {
+        if (address.getRecipientName() != null && !address.getRecipientName().isEmpty()) {
+            binding.edtReceiverName.setText(address.getRecipientName());
+        }
+        if (address.getPhone() != null && !address.getPhone().isEmpty()) {
+            binding.edtReceiverPhone.setText(address.getPhone());
+        }
+        if (address.getStreetAddress() != null && !address.getStreetAddress().isEmpty()) {
+            binding.edtShippingAddress.setText(address.getStreetAddress());
+        }
     }
 
     private void calculateTotal() {
@@ -123,11 +171,16 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void placeOrder() {
-        String address = binding.edtShippingAddress.getText() != null ? binding.edtShippingAddress.getText().toString().trim() : "";
+        String receiverName = binding.edtReceiverName.getText() != null ? binding.edtReceiverName.getText().toString().trim() : "";
         String phone = binding.edtReceiverPhone.getText() != null ? binding.edtReceiverPhone.getText().toString().trim() : "";
+        String streetAddress = binding.edtShippingAddress.getText() != null ? binding.edtShippingAddress.getText().toString().trim() : "";
 
-        if (TextUtils.isEmpty(address)) {
-            binding.tilShippingAddress.setError("Vui lòng nhập địa chỉ nhận hàng");
+        binding.tilReceiverName.setError(null);
+        binding.tilReceiverPhone.setError(null);
+        binding.tilShippingAddress.setError(null);
+
+        if (TextUtils.isEmpty(receiverName)) {
+            binding.tilReceiverName.setError("Vui lòng nhập tên người nhận");
             return;
         }
 
@@ -136,6 +189,13 @@ public class CheckoutActivity extends AppCompatActivity {
             return;
         }
 
+        if (TextUtils.isEmpty(streetAddress)) {
+            binding.tilShippingAddress.setError("Vui lòng nhập địa chỉ nhận hàng");
+            return;
+        }
+
+        String fullShippingAddress = receiverName + " - " + streetAddress;
+
         int userId = sessionManager.getUserId();
         String payment = binding.rbCOD.isChecked() ? "COD (Tiền mặt)" : "Chuyển khoản / QR";
         if (!TextUtils.isEmpty(appliedVoucherCode)) {
@@ -143,7 +203,7 @@ public class CheckoutActivity extends AppCompatActivity {
         }
 
         binding.btnConfirmOrder.setEnabled(false);
-        checkoutViewModel.createOrder(userId, address, phone, payment, totalAmount).observe(this, resource -> {
+        checkoutViewModel.createOrder(userId, fullShippingAddress, phone, payment, totalAmount).observe(this, resource -> {
             if (resource == null) return;
             switch (resource.status) {
                 case LOADING:

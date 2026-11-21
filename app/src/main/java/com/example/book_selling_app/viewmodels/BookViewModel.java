@@ -51,4 +51,12 @@ public class BookViewModel extends AndroidViewModel {
     public LiveData<Resource<List<Book>>> getFavoriteBooks(int userId) {
         return bookRepository.getFavoriteBooks(userId);
     }
+
+    public LiveData<Resource<List<Book>>> getBooksByAuthor(String author, int excludeBookId) {
+        return bookRepository.getBooksByAuthor(author, excludeBookId);
+    }
+
+    public LiveData<Resource<List<Book>>> getAllBooksByAuthor(String author) {
+        return bookRepository.getAllBooksByAuthor(author);
+    }
 }
