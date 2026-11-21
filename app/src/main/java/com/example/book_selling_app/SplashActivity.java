@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.book_selling_app.utils.SessionManager;
 
@@ -13,11 +14,15 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SessionManager session = new SessionManager(this);
+        AppCompatDelegate.setDefaultNightMode(
+            session.isDarkMode() ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+        );
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            SessionManager session = new SessionManager(SplashActivity.this);
             Intent intent;
             if (session.isLoggedIn()) {
                 if ("ADMIN".equalsIgnoreCase(session.getUserRole())) {

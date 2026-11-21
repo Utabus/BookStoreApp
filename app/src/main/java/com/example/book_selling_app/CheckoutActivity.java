@@ -60,6 +60,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnApplyVoucher.setOnClickListener(v -> applyVoucher());
+        binding.btnOpenVoucherPicker.setOnClickListener(v -> showVoucherPickerBottomSheet());
         binding.btnConfirmOrder.setOnClickListener(v -> placeOrder());
         binding.btnPickAddressBook.setOnClickListener(v -> {
             Intent intent = new Intent(CheckoutActivity.this, AddressListActivity.class);
@@ -168,6 +169,42 @@ public class CheckoutActivity extends AppCompatActivity {
         totalAmount = Math.max(0, subtotalAmount - discountAmount);
         binding.tvCheckoutSubtotal.setText(currencyFormatter.format(subtotalAmount) + " đ");
         binding.tvCheckoutTotal.setText(currencyFormatter.format(totalAmount) + " đ");
+    }
+
+    private void showVoucherPickerBottomSheet() {
+        com.google.android.material.bottomsheet.BottomSheetDialog dialog =
+                new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+        com.example.book_selling_app.databinding.BottomSheetVoucherPickerBinding vBinding =
+                com.example.book_selling_app.databinding.BottomSheetVoucherPickerBinding.inflate(getLayoutInflater());
+        dialog.setContentView(vBinding.getRoot());
+
+        vBinding.btnCloseVoucherPicker.setOnClickListener(v -> dialog.dismiss());
+
+        vBinding.btnApplyVoucherGiam10.setOnClickListener(v -> {
+            binding.edtVoucherCode.setText("GIAM10");
+            dialog.dismiss();
+            applyVoucher();
+        });
+
+        vBinding.btnApplyVoucherGiam30k.setOnClickListener(v -> {
+            binding.edtVoucherCode.setText("GIAM30K");
+            dialog.dismiss();
+            applyVoucher();
+        });
+
+        vBinding.btnApplyVoucherBooklover.setOnClickListener(v -> {
+            binding.edtVoucherCode.setText("BOOKLOVER");
+            dialog.dismiss();
+            applyVoucher();
+        });
+
+        vBinding.btnApplyVoucherWelcome50.setOnClickListener(v -> {
+            binding.edtVoucherCode.setText("WELCOME50");
+            dialog.dismiss();
+            applyVoucher();
+        });
+
+        dialog.show();
     }
 
     private void placeOrder() {

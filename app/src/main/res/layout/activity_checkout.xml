@@ -293,6 +293,18 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/btnOpenVoucherPicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="🎟 Xem danh sách mã giảm giá có sẵn"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_sm"
+                        android:textStyle="bold" />
+
+                    <TextView
                         android:id="@+id/tvVoucherMessage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

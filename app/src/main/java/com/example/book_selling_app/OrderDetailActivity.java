@@ -97,6 +97,66 @@ public class OrderDetailActivity extends AppCompatActivity {
             binding.tvUserDetailStatusBadge.setText("ĐÃ HỦY ĐƠN");
             binding.tvUserDetailStatusBadge.setBackgroundColor(ContextCompat.getColor(this, R.color.status_error));
         }
+
+        updateStepperUI(status);
+    }
+
+    private void updateStepperUI(String status) {
+        if ("CANCELLED".equalsIgnoreCase(status) || "ĐÃ HỦY".equalsIgnoreCase(status) || "ĐÃ HỦY ĐƠN".equalsIgnoreCase(status)) {
+            binding.stepperView.layoutStepperTimeline.setVisibility(View.GONE);
+            binding.stepperView.layoutStepperCancelled.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        binding.stepperView.layoutStepperTimeline.setVisibility(View.VISIBLE);
+        binding.stepperView.layoutStepperCancelled.setVisibility(View.GONE);
+
+        int colorPrimary = ContextCompat.getColor(this, R.color.primary);
+        int colorSecondary = ContextCompat.getColor(this, R.color.secondary);
+        int colorSuccess = ContextCompat.getColor(this, R.color.status_success);
+        int colorMuted = ContextCompat.getColor(this, R.color.text_muted);
+        int colorSecondaryText = ContextCompat.getColor(this, R.color.text_secondary);
+        int colorWhite = ContextCompat.getColor(this, R.color.white);
+        int colorInactive = ContextCompat.getColor(this, R.color.surface_variant);
+        int colorBorder = ContextCompat.getColor(this, R.color.border_subtle);
+
+        boolean isConfirmed = "CONFIRMED".equalsIgnoreCase(status) || "ĐÃ DUYỆT".equalsIgnoreCase(status)
+                || "SHIPPING".equalsIgnoreCase(status) || "ĐANG GIAO".equalsIgnoreCase(status)
+                || "DELIVERED".equalsIgnoreCase(status) || "ĐÃ GIAO".equalsIgnoreCase(status) || "ĐÃ GIAO HÀNG".equalsIgnoreCase(status);
+
+        boolean isShipping = "SHIPPING".equalsIgnoreCase(status) || "ĐANG GIAO".equalsIgnoreCase(status)
+                || "DELIVERED".equalsIgnoreCase(status) || "ĐÃ GIAO".equalsIgnoreCase(status) || "ĐÃ GIAO HÀNG".equalsIgnoreCase(status);
+
+        boolean isDelivered = "DELIVERED".equalsIgnoreCase(status) || "ĐÃ GIAO".equalsIgnoreCase(status) || "ĐÃ GIAO HÀNG".equalsIgnoreCase(status);
+
+        // Step 1: Placed (always done)
+        binding.stepperView.cardStep1.setCardBackgroundColor(colorPrimary);
+        binding.stepperView.imgStep1.setColorFilter(colorWhite);
+        binding.stepperView.tvStep1Label.setTextColor(colorPrimary);
+
+        // Line 1 -> 2
+        binding.stepperView.lineStep1To2.setBackgroundColor(isConfirmed ? colorPrimary : colorBorder);
+
+        // Step 2: Confirmed
+        binding.stepperView.cardStep2.setCardBackgroundColor(isConfirmed ? colorPrimary : colorInactive);
+        binding.stepperView.imgStep2.setColorFilter(isConfirmed ? colorWhite : colorMuted);
+        binding.stepperView.tvStep2Label.setTextColor(isConfirmed ? colorPrimary : colorSecondaryText);
+
+        // Line 2 -> 3
+        binding.stepperView.lineStep2To3.setBackgroundColor(isShipping ? colorSecondary : colorBorder);
+
+        // Step 3: Shipping
+        binding.stepperView.cardStep3.setCardBackgroundColor(isShipping ? colorSecondary : colorInactive);
+        binding.stepperView.imgStep3.setColorFilter(isShipping ? colorWhite : colorMuted);
+        binding.stepperView.tvStep3Label.setTextColor(isShipping ? colorSecondary : colorSecondaryText);
+
+        // Line 3 -> 4
+        binding.stepperView.lineStep3To4.setBackgroundColor(isDelivered ? colorSuccess : colorBorder);
+
+        // Step 4: Delivered
+        binding.stepperView.cardStep4.setCardBackgroundColor(isDelivered ? colorSuccess : colorInactive);
+        binding.stepperView.imgStep4.setColorFilter(isDelivered ? colorWhite : colorMuted);
+        binding.stepperView.tvStep4Label.setTextColor(isDelivered ? colorSuccess : colorSecondaryText);
     }
 
     private void setupEvents() {

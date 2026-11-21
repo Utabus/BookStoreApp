@@ -59,9 +59,21 @@ public class ProfileFragment extends Fragment {
             binding.btnMenuAdminPanel.setVisibility(View.GONE);
             binding.dividerAdmin.setVisibility(View.GONE);
         }
+
+        binding.switchDarkMode.setChecked(sessionManager.isDarkMode());
     }
 
     private void setupEvents() {
+        binding.switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked != sessionManager.isDarkMode()) {
+                sessionManager.setDarkMode(isChecked);
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                        isChecked ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES :
+                                androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                );
+            }
+        });
+
         binding.btnMenuEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), EditProfileActivity.class);
             startActivity(intent);

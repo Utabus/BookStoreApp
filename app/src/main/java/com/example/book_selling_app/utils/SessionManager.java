@@ -11,6 +11,7 @@ public class SessionManager {
     private static final String KEY_USER_NAME = "userName";
     private static final String KEY_USER_EMAIL = "userEmail";
     private static final String KEY_USER_ROLE = "userRole";
+    private static final String KEY_DARK_MODE = "isDarkMode";
 
     private final SharedPreferences pref;
     private final SharedPreferences.Editor editor;
@@ -52,6 +53,15 @@ public class SessionManager {
     public void updateUserName(String name) {
         editor.putString(KEY_USER_NAME, name);
         editor.apply();
+    }
+
+    public void setDarkMode(boolean isDark) {
+        editor.putBoolean(KEY_DARK_MODE, isDark);
+        editor.apply();
+    }
+
+    public boolean isDarkMode() {
+        return pref.getBoolean(KEY_DARK_MODE, false);
     }
 
     public void logout() {

@@ -210,6 +210,13 @@ public class BookDetailActivity extends AppCompatActivity {
     private void setupEvents() {
         binding.btnBack.setOnClickListener(v -> finish());
 
+        // Open Book Reader preview
+        binding.btnPreviewBook.setOnClickListener(v -> {
+            Intent intent = new Intent(BookDetailActivity.this, BookReaderActivity.class);
+            intent.putExtra(BookReaderActivity.EXTRA_BOOK, currentBook);
+            startActivity(intent);
+        });
+
         // Click on author to view all author's books
         View.OnClickListener authorClickListener = v -> {
             Intent intent = new Intent(BookDetailActivity.this, AuthorBooksActivity.class);

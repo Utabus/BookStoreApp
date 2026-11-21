@@ -224,6 +224,23 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
+                <!-- Free Sample Book Preview Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPreviewBook"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="12dp"
+                    android:text="📖 ĐỌC THỬ SÁCH MIỄN PHÍ"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/text_sm"
+                    android:textStyle="bold"
+                    app:cornerRadius="@dimen/radius_md"
+                    app:icon="@drawable/ic_book"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/primary"
+                    app:strokeColor="@color/primary" />
+
             </LinearLayout>
 
             <!-- Quantity Selector Section -->
