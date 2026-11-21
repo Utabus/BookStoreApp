@@ -1067,6 +1067,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public int updateOrderStatus(int orderId, String newStatus) {
+        if ("CANCELLED".equalsIgnoreCase(newStatus) || "ĐÃ HỦY".equalsIgnoreCase(newStatus)) {
+            return cancelOrder(orderId);
+        }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ORDER_STATUS, newStatus);
@@ -1074,7 +1077,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public int cancelOrder(int orderId) {
-        return updateOrderStatus(orderId, "CANCELLED");
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            // Check current status
+            Cursor checkCursor = db.rawQuery("SELECT status FROM " + TABLE_ORDERS + " WHERE id = ?", new String[]{String.valueOf(orderId)});
+            String currentStatus = "";
+            if (checkCursor != null && checkCursor.moveToFirst()) {
+                currentStatus = checkCursor.getString(0);
+                checkCursor.close();
+            }
+            if ("CANCELLED".equalsIgnoreCase(currentStatus) || "ĐÃ HỦY".equalsIgnoreCase(currentStatus)) {
+                db.setTransactionSuccessful();
+                return 1; // already cancelled
+            }
+
+            // Restore book stock from order_items
+            Cursor itemsCursor = db.rawQuery("SELECT book_id, quantity FROM " + TABLE_ORDER_ITEMS + " WHERE order_id = ?", new String[]{String.valueOf(orderId)});
+            if (itemsCursor != null && itemsCursor.moveToFirst()) {
+                do {
+                    int bookId = itemsCursor.getInt(0);
+                    int qty = itemsCursor.getInt(1);
+                    db.execSQL("UPDATE " + TABLE_BOOKS + " SET " + COLUMN_BOOK_STOCK + " = " + COLUMN_BOOK_STOCK + " + ? WHERE " + COLUMN_BOOK_ID + " = ?", new Object[]{qty, bookId});
+                } while (itemsCursor.moveToNext());
+                itemsCursor.close();
+            }
+
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_ORDER_STATUS, "CANCELLED");
+            int rows = db.update(TABLE_ORDERS, cv, COLUMN_ORDER_ID + " = ?", new String[]{String.valueOf(orderId)});
+            db.setTransactionSuccessful();
+            return rows;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     // ==========================================
@@ -1130,6 +1166,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         if (cursor != null) cursor.close();
         return false;
+    }
+
+    public boolean resetPassword(String email, String newPassword) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_USER_PASSWORD, newPassword);
+        int rows = db.update(TABLE_USERS, cv, COLUMN_USER_EMAIL + " = ?", new String[]{email});
+        return rows > 0;
     }
 
     public User loginUser(String email, String password) {

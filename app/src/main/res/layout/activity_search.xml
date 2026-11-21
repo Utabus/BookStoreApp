@@ -68,6 +68,16 @@
             android:contentDescription="Quét mã vạch"
             android:src="@drawable/ic_barcode_scanner"
             app:tint="@color/primary" />
+
+        <ImageButton
+            android:id="@+id/btnFilter"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Lọc và sắp xếp"
+            android:src="@drawable/ic_filter"
+            app:tint="@color/primary" />
     </LinearLayout>
 
     <!-- Empty Search State -->

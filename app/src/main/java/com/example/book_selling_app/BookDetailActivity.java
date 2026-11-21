@@ -124,6 +124,23 @@ public class BookDetailActivity extends AppCompatActivity {
                 .error(R.drawable.ic_book)
                 .centerCrop()
                 .into(binding.imgBookDetailCover);
+
+        // Stock status
+        if (currentBook.getStock() <= 0) {
+            binding.tvDetailStockStatus.setText("Tạm thời hết hàng");
+            binding.tvDetailStockStatus.setTextColor(getColor(R.color.status_error));
+            binding.layoutQuantityCounter.setVisibility(View.GONE);
+            binding.btnAddToCart.setEnabled(false);
+            binding.btnAddToCart.setText("HẾT HÀNG");
+            binding.btnBuyNow.setVisibility(View.GONE);
+        } else {
+            binding.tvDetailStockStatus.setText("Còn " + currentBook.getStock() + " cuốn trong kho");
+            binding.tvDetailStockStatus.setTextColor(getColor(R.color.text_secondary));
+            binding.layoutQuantityCounter.setVisibility(View.VISIBLE);
+            binding.btnAddToCart.setEnabled(true);
+            binding.btnAddToCart.setText("Thêm vào giỏ");
+            binding.btnBuyNow.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupAdapters() {
@@ -239,8 +256,12 @@ public class BookDetailActivity extends AppCompatActivity {
         });
 
         binding.btnDetailPlus.setOnClickListener(v -> {
-            quantity++;
-            binding.tvDetailQuantity.setText(String.valueOf(quantity));
+            if (quantity < currentBook.getStock()) {
+                quantity++;
+                binding.tvDetailQuantity.setText(String.valueOf(quantity));
+            } else {
+                Toast.makeText(this, "Kho chỉ còn " + currentBook.getStock() + " cuốn!", Toast.LENGTH_SHORT).show();
+            }
         });
 
         binding.btnDetailMinus.setOnClickListener(v -> {

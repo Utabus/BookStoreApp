@@ -45,6 +45,24 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_xs"
                 android:textStyle="bold" />
+
+            <!-- Out of Stock Badge -->
+            <TextView
+                android:id="@+id/tvOutOfStockBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="8dp"
+                android:background="@drawable/bg_chip_unselected"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:text="Hết hàng"
+                android:textColor="@color/status_error"
+                android:textSize="@dimen/text_xs"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </FrameLayout>
 
         <!-- Information Container -->

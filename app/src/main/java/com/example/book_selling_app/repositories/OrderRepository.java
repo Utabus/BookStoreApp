@@ -61,8 +61,8 @@ public class OrderRepository {
                 if (orderId != -1) {
                     List<Map<String, Object>> itemsList = new ArrayList<>();
 
-                    // Copy items from cart to order_items with price & details
-                    String cartQuery = "SELECT c.book_id, c.quantity, b.title, b.author, b.price, b.image_url "
+                    // Copy items from cart to order_items with price & details, validate & decrement stock
+                    String cartQuery = "SELECT c.book_id, c.quantity, b.title, b.author, b.price, b.image_url, b.stock "
                             + " FROM " + DatabaseHelper.TABLE_CART + " c "
                             + " LEFT JOIN " + DatabaseHelper.TABLE_BOOKS + " b ON c.book_id = b.id "
                             + " WHERE c.user_id = ?";
@@ -75,6 +75,15 @@ public class OrderRepository {
                             String bAuthor = c.getString(3) != null ? c.getString(3) : "";
                             double bPrice = c.getDouble(4);
                             String bImage = c.getString(5) != null ? c.getString(5) : "";
+                            int bStock = c.getInt(6);
+
+                            if (bStock < qty) {
+                                c.close();
+                                throw new Exception("Sách \"" + bTitle + "\" chỉ còn " + bStock + " cuốn trong kho, không đủ số lượng đặt.");
+                            }
+
+                            // Deduct stock in database
+                            db.execSQL("UPDATE " + DatabaseHelper.TABLE_BOOKS + " SET " + DatabaseHelper.COLUMN_BOOK_STOCK + " = " + DatabaseHelper.COLUMN_BOOK_STOCK + " - ? WHERE " + DatabaseHelper.COLUMN_BOOK_ID + " = ?", new Object[]{qty, bookId});
 
                             ContentValues itemValues = new ContentValues();
                             itemValues.put(DatabaseHelper.COLUMN_ITEM_ORDER_ID, orderId);

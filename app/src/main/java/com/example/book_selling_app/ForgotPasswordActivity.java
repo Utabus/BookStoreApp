@@ -28,8 +28,20 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 return;
             }
             binding.tilEmail.setError(null);
-            Toast.makeText(this, "Đã gửi hướng dẫn khôi phục mật khẩu vào " + email, Toast.LENGTH_LONG).show();
-            finish();
+
+            com.example.book_selling_app.database.DatabaseHelper dbHelper =
+                    new com.example.book_selling_app.database.DatabaseHelper(this);
+            boolean resetSuccess = dbHelper.resetPassword(email, "123456");
+            if (resetSuccess) {
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Khôi phục mật khẩu thành công")
+                        .setMessage("Mật khẩu cho tài khoản \"" + email + "\" đã được đặt lại về mặc định là: 123456\n\nVui lòng đăng nhập và đổi mật khẩu mới.")
+                        .setPositiveButton("Đăng nhập ngay", (dialog, which) -> finish())
+                        .setCancelable(false)
+                        .show();
+            } else {
+                binding.tilEmail.setError("Email không tồn tại trong hệ thống BookStore");
+            }
         });
     }
 }

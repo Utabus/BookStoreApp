@@ -195,13 +195,51 @@ public class CheckoutActivity extends AppCompatActivity {
         }
 
         String fullShippingAddress = receiverName + " - " + streetAddress;
-
-        int userId = sessionManager.getUserId();
         String payment = binding.rbCOD.isChecked() ? "COD (Tiền mặt)" : "Chuyển khoản / QR";
         if (!TextUtils.isEmpty(appliedVoucherCode)) {
             payment += " [Mã: " + appliedVoucherCode + "]";
         }
 
+        if (!binding.rbCOD.isChecked()) {
+            showQrPaymentDialog(receiverName, phone, fullShippingAddress, payment);
+        } else {
+            executeCreateOrder(fullShippingAddress, phone, payment);
+        }
+    }
+
+    private void showQrPaymentDialog(String receiverName, String phone, String fullShippingAddress, String payment) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        com.example.book_selling_app.databinding.DialogQrPaymentBinding qrBinding =
+                com.example.book_selling_app.databinding.DialogQrPaymentBinding.inflate(getLayoutInflater());
+        builder.setView(qrBinding.getRoot());
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        qrBinding.tvQrAmount.setText(currencyFormatter.format(totalAmount) + " đ");
+        String memo = "BOOKSTORE " + (System.currentTimeMillis() % 1000000);
+        qrBinding.tvQrTransferNote.setText(memo);
+
+        String qrApiUrl = "https://img.vietqr.io/image/MB-0987654321-compact2.png?amount="
+                + (long) totalAmount + "&addInfo=" + memo.replace(" ", "%20") + "&accountName=BOOKSTORE%20VIETNAM";
+        com.bumptech.glide.Glide.with(this)
+                .load(qrApiUrl)
+                .placeholder(R.drawable.ic_book)
+                .error(R.drawable.ic_book)
+                .into(qrBinding.imgVietQrCode);
+
+        qrBinding.btnCloseQrDialog.setOnClickListener(v -> dialog.dismiss());
+        qrBinding.btnConfirmQrPaid.setOnClickListener(v -> {
+            dialog.dismiss();
+            executeCreateOrder(fullShippingAddress, phone, payment);
+        });
+
+        dialog.show();
+    }
+
+    private void executeCreateOrder(String fullShippingAddress, String phone, String payment) {
+        int userId = sessionManager.getUserId();
         binding.btnConfirmOrder.setEnabled(false);
         checkoutViewModel.createOrder(userId, fullShippingAddress, phone, payment, totalAmount).observe(this, resource -> {
             if (resource == null) return;

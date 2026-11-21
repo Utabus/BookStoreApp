@@ -101,6 +101,7 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     private void setupEvents() {
         binding.btnBack.setOnClickListener(v -> finish());
+        binding.btnShareOrderInvoice.setOnClickListener(v -> shareOrderInvoice());
 
         binding.btnUserCancelOrder.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
@@ -123,21 +124,59 @@ public class OrderDetailActivity extends AppCompatActivity {
             orderViewModel.getBooksInOrder(order.getId()).observe(this, resource -> {
                 if (resource != null && resource.isSuccess() && resource.data != null) {
                     List<Book> booksInOrder = resource.data;
-                    Intent reviewIntent = new Intent(OrderDetailActivity.this, WriteReviewActivity.class);
-                    if (!booksInOrder.isEmpty()) {
-                        Book book = booksInOrder.get(0);
-                        reviewIntent.putExtra("BOOK_ID", book.getId());
-                        reviewIntent.putExtra("BOOK_TITLE", book.getTitle());
-                        reviewIntent.putExtra("BOOK_AUTHOR", book.getAuthor());
-                        reviewIntent.putExtra("BOOK_IMAGE", book.getImageUrl());
+                    if (booksInOrder.isEmpty()) {
+                        launchWriteReview(1, "Sách trong đơn hàng #" + order.getId(), "Nhiều tác giả", "");
+                    } else if (booksInOrder.size() == 1) {
+                        Book b = booksInOrder.get(0);
+                        launchWriteReview(b.getId(), b.getTitle(), b.getAuthor(), b.getImageUrl());
                     } else {
-                        reviewIntent.putExtra("BOOK_ID", 1);
-                        reviewIntent.putExtra("BOOK_TITLE", "Sách trong đơn hàng #" + order.getId());
-                        reviewIntent.putExtra("BOOK_AUTHOR", "Nhiều tác giả");
+                        String[] titles = new String[booksInOrder.size()];
+                        for (int i = 0; i < booksInOrder.size(); i++) {
+                            titles[i] = (i + 1) + ". " + booksInOrder.get(i).getTitle();
+                        }
+                        new AlertDialog.Builder(this)
+                                .setTitle("Chọn sách bạn muốn nhận xét")
+                                .setItems(titles, (dialog, which) -> {
+                                    Book b = booksInOrder.get(which);
+                                    launchWriteReview(b.getId(), b.getTitle(), b.getAuthor(), b.getImageUrl());
+                                })
+                                .setNegativeButton("Đóng", null)
+                                .show();
                     }
-                    startActivity(reviewIntent);
                 }
             });
         });
+    }
+
+    private void launchWriteReview(int bookId, String title, String author, String image) {
+        Intent reviewIntent = new Intent(OrderDetailActivity.this, WriteReviewActivity.class);
+        reviewIntent.putExtra("BOOK_ID", bookId);
+        reviewIntent.putExtra("BOOK_TITLE", title);
+        reviewIntent.putExtra("BOOK_AUTHOR", author);
+        reviewIntent.putExtra("BOOK_IMAGE", image);
+        startActivity(reviewIntent);
+    }
+
+    private void shareOrderInvoice() {
+        StringBuilder invoice = new StringBuilder();
+        invoice.append("=========================================\n");
+        invoice.append("       HÓA ĐƠN MUA HÀNG - BOOKSTORE       \n");
+        invoice.append("=========================================\n");
+        invoice.append("Mã đơn hàng : #ORD-").append(order.getId()).append("\n");
+        invoice.append("Thời gian   : ").append(order.getOrderDate()).append("\n");
+        invoice.append("Trạng thái  : ").append(order.getStatus()).append("\n");
+        invoice.append("Địa chỉ nhận: ").append(order.getShippingAddress()).append("\n");
+        invoice.append("Phương thức : ").append(order.getPaymentMethod()).append("\n");
+        invoice.append("-----------------------------------------\n");
+        invoice.append("TỔNG TIỀN   : ").append(formatter.format(order.getTotalAmount())).append("\n");
+        invoice.append("=========================================\n");
+        invoice.append("Cảm ơn quý khách đã mua sắm tại BookStore!\n");
+
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, invoice.toString());
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Hóa đơn mua sách #ORD-" + order.getId());
+        sendIntent.setType("text/plain");
+
+        startActivity(Intent.createChooser(sendIntent, "Chia sẻ hóa đơn đơn hàng"));
     }
 }

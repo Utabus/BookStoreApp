@@ -54,14 +54,46 @@ public class AdminUsersActivity extends AppCompatActivity {
 
     private void setupEvents() {
         binding.btnBack.setOnClickListener(v -> finish());
+
+        binding.edtSearchUser.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterUsers(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+    }
+
+    private void filterUsers(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            adapter.updateData(userList);
+            binding.tvAdminUserCount.setText(userList.size() + " người dùng");
+            return;
+        }
+
+        String lower = query.toLowerCase().trim();
+        List<User> filtered = new ArrayList<>();
+        for (User u : userList) {
+            if ((u.getFullName() != null && u.getFullName().toLowerCase().contains(lower))
+                    || (u.getEmail() != null && u.getEmail().toLowerCase().contains(lower))
+                    || (u.getPhone() != null && u.getPhone().contains(lower))) {
+                filtered.add(u);
+            }
+        }
+        adapter.updateData(filtered);
+        binding.tvAdminUserCount.setText(filtered.size() + " người dùng");
     }
 
     private void loadUsers() {
         userViewModel.getAllUsers().observe(this, resource -> {
             if (resource != null && resource.isSuccess() && resource.data != null) {
                 userList = resource.data;
-                adapter.updateData(userList);
-                binding.tvAdminUserCount.setText(userList.size() + " người dùng");
+                filterUsers(binding.edtSearchUser.getText() != null ? binding.edtSearchUser.getText().toString() : "");
             }
         });
     }

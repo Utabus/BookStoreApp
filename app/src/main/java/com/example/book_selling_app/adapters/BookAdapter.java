@@ -73,6 +73,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             holder.binding.tvDiscountBadge.setVisibility(View.GONE);
         }
 
+        if (book.getStock() <= 0) {
+            holder.binding.tvOutOfStockBadge.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.tvOutOfStockBadge.setVisibility(View.GONE);
+        }
+
         Glide.with(context)
                 .load(book.getImageUrl())
                 .placeholder(R.drawable.ic_book)

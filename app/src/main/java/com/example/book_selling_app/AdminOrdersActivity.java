@@ -23,6 +23,7 @@ public class AdminOrdersActivity extends AppCompatActivity {
     private AdminOrderViewModel orderViewModel;
     private AdminOrderAdapter adapter;
     private String currentFilter = "ALL";
+    private List<Order> currentOrdersList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +80,51 @@ public class AdminOrdersActivity extends AppCompatActivity {
 
     private void setupEvents() {
         binding.btnBack.setOnClickListener(v -> finish());
+
+        binding.edtSearchOrder.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterOrders(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+    }
+
+    private void filterOrders(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            adapter.updateData(currentOrdersList);
+            binding.tvAdminOrderCount.setText(currentOrdersList.size() + " đơn");
+            return;
+        }
+
+        String lower = query.toLowerCase().trim();
+        List<Order> filtered = new ArrayList<>();
+        for (Order o : currentOrdersList) {
+            String ordIdStr = String.valueOf(o.getId());
+            String ordFullStr = "ord-" + ordIdStr;
+            String customer = o.getCustomerName() != null ? o.getCustomerName().toLowerCase() : "";
+            String phone = o.getCustomerPhone() != null ? o.getCustomerPhone() : "";
+            String address = o.getShippingAddress() != null ? o.getShippingAddress().toLowerCase() : "";
+
+            if (ordIdStr.contains(lower) || ordFullStr.contains(lower) || customer.contains(lower)
+                    || phone.contains(lower) || address.contains(lower)) {
+                filtered.add(o);
+            }
+        }
+        adapter.updateData(filtered);
+        binding.tvAdminOrderCount.setText(filtered.size() + " đơn");
     }
 
     private void loadOrders(String filter) {
         orderViewModel.getAllOrdersForAdmin(filter).observe(this, resource -> {
             if (resource != null && resource.isSuccess() && resource.data != null) {
-                List<Order> list = resource.data;
-                adapter.updateData(list);
-                binding.tvAdminOrderCount.setText(list.size() + " đơn");
+                currentOrdersList = resource.data;
+                filterOrders(binding.edtSearchOrder.getText() != null ? binding.edtSearchOrder.getText().toString() : "");
             }
         });
     }

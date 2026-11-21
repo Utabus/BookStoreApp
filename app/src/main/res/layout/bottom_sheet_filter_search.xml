@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:ignore="HardcodedText,ContentDescription">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Bộ lọc &amp; Sắp xếp"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_lg"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnCloseFilter"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            app:tint="@color/text_secondary" />
+    </LinearLayout>
+
+    <!-- Sắp xếp theo -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Sắp xếp theo"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_md"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgSort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <RadioButton
+            android:id="@+id/rbSortDefault"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Mới nhất / Mặc định"
+            android:textColor="@color/text_primary" />
+
+        <RadioButton
+            android:id="@+id/rbSortPriceAsc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giá: Thấp đến Cao"
+            android:textColor="@color/text_primary" />
+
+        <RadioButton
+            android:id="@+id/rbSortPriceDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giá: Cao đến Thấp"
+            android:textColor="@color/text_primary" />
+
+        <RadioButton
+            android:id="@+id/rbSortRating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đánh giá cao nhất (Sao ⭐)"
+            android:textColor="@color/text_primary" />
+    </RadioGroup>
+
+    <!-- Khoảng giá -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Khoảng giá"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_md"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgPriceRange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <RadioButton
+            android:id="@+id/rbPriceAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Tất cả mức giá"
+            android:textColor="@color/text_primary" />
+
+        <RadioButton
+            android:id="@+id/rbPriceUnder100k"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dưới 100.000 đ"
+            android:textColor="@color/text_primary" />
+
+        <RadioButton
+            android:id="@+id/rbPrice100kTo200k"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="100.000 đ - 200.000 đ"
+            android:textColor="@color/text_primary" />
+
+        <RadioButton
+            android:id="@+id/rbPriceAbove200k"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Trên 200.000 đ"
+            android:textColor="@color/text_primary" />
+    </RadioGroup>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnResetFilter"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="Đặt lại"
+            android:textColor="@color/text_primary"
+            app:cornerRadius="@dimen/radius_md"
+            app:strokeColor="@color/border_subtle" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApplyFilter"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_primary"
+            android:text="ÁP DỤNG"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="@dimen/radius_md" />
+    </LinearLayout>
+
+</LinearLayout>

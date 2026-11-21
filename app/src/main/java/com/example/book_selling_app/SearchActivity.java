@@ -34,6 +34,11 @@ public class SearchActivity extends AppCompatActivity {
     private ActivityResultLauncher<ScanOptions> barcodeLauncher;
     private Integer selectedCategoryId = null;
 
+    private Double selectedMinPrice = null;
+    private Double selectedMaxPrice = null;
+    private String selectedSortBy = null;
+    private String currentKeyword = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +58,7 @@ public class SearchActivity extends AppCompatActivity {
 
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnClearSearch.setOnClickListener(v -> binding.edtSearchQuery.setText(""));
+        binding.btnFilter.setOnClickListener(v -> showFilterBottomSheet());
 
         binding.rvSearchResults.setLayoutManager(new GridLayoutManager(this, 2));
         bookAdapter = new BookAdapter(this, searchResults, book -> {
@@ -79,9 +85,9 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = s.toString().trim();
-                binding.btnClearSearch.setVisibility(query.isEmpty() ? View.GONE : View.VISIBLE);
-                searchBooks(query);
+                currentKeyword = s.toString().trim();
+                binding.btnClearSearch.setVisibility(currentKeyword.isEmpty() ? View.GONE : View.VISIBLE);
+                searchBooks();
             }
 
             @Override
@@ -94,7 +100,82 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         // Initial search to display books
-        searchBooks("");
+        searchBooks();
+    }
+
+    private void showFilterBottomSheet() {
+        com.google.android.material.bottomsheet.BottomSheetDialog dialog =
+                new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+        com.example.book_selling_app.databinding.BottomSheetFilterSearchBinding filterBinding =
+                com.example.book_selling_app.databinding.BottomSheetFilterSearchBinding.inflate(getLayoutInflater());
+        dialog.setContentView(filterBinding.getRoot());
+
+        // Pre-fill current state
+        if ("PRICE_ASC".equals(selectedSortBy)) {
+            filterBinding.rbSortPriceAsc.setChecked(true);
+        } else if ("PRICE_DESC".equals(selectedSortBy)) {
+            filterBinding.rbSortPriceDesc.setChecked(true);
+        } else if ("RATING".equals(selectedSortBy)) {
+            filterBinding.rbSortRating.setChecked(true);
+        } else {
+            filterBinding.rbSortDefault.setChecked(true);
+        }
+
+        if (selectedMinPrice == null && selectedMaxPrice != null && selectedMaxPrice == 100000.0) {
+            filterBinding.rbPriceUnder100k.setChecked(true);
+        } else if (selectedMinPrice != null && selectedMinPrice == 100000.0 && selectedMaxPrice != null && selectedMaxPrice == 200000.0) {
+            filterBinding.rbPrice100kTo200k.setChecked(true);
+        } else if (selectedMinPrice != null && selectedMinPrice == 200000.0 && selectedMaxPrice == null) {
+            filterBinding.rbPriceAbove200k.setChecked(true);
+        } else {
+            filterBinding.rbPriceAll.setChecked(true);
+        }
+
+        filterBinding.btnCloseFilter.setOnClickListener(v -> dialog.dismiss());
+
+        filterBinding.btnResetFilter.setOnClickListener(v -> {
+            selectedSortBy = null;
+            selectedMinPrice = null;
+            selectedMaxPrice = null;
+            dialog.dismiss();
+            searchBooks();
+            Toast.makeText(this, "Đã đặt lại bộ lọc", Toast.LENGTH_SHORT).show();
+        });
+
+        filterBinding.btnApplyFilter.setOnClickListener(v -> {
+            // Read sort
+            int sortId = filterBinding.rgSort.getCheckedRadioButtonId();
+            if (sortId == R.id.rbSortPriceAsc) {
+                selectedSortBy = "PRICE_ASC";
+            } else if (sortId == R.id.rbSortPriceDesc) {
+                selectedSortBy = "PRICE_DESC";
+            } else if (sortId == R.id.rbSortRating) {
+                selectedSortBy = "RATING";
+            } else {
+                selectedSortBy = null;
+            }
+
+            // Read price range
+            int priceId = filterBinding.rgPriceRange.getCheckedRadioButtonId();
+            if (priceId == R.id.rbPriceUnder100k) {
+                selectedMinPrice = null;
+                selectedMaxPrice = 100000.0;
+            } else if (priceId == R.id.rbPrice100kTo200k) {
+                selectedMinPrice = 100000.0;
+                selectedMaxPrice = 200000.0;
+            } else if (priceId == R.id.rbPriceAbove200k) {
+                selectedMinPrice = 200000.0;
+                selectedMaxPrice = null;
+            } else {
+                selectedMinPrice = null;
+                selectedMaxPrice = null;
+            }
+
+            dialog.dismiss();
+            searchBooks();
+        });
+
+        dialog.show();
     }
 
     private void launchBarcodeScanner() {
@@ -105,8 +186,8 @@ public class SearchActivity extends AppCompatActivity {
         barcodeLauncher.launch(options);
     }
 
-    private void searchBooks(String query) {
-        bookViewModel.searchBooks(query, selectedCategoryId, null, null, null, null).observe(this, resource -> {
+    private void searchBooks() {
+        bookViewModel.searchBooks(currentKeyword, selectedCategoryId, selectedMinPrice, selectedMaxPrice, null, selectedSortBy).observe(this, resource -> {
             if (resource != null && resource.isSuccess() && resource.data != null) {
                 searchResults.clear();
                 searchResults.addAll(resource.data);

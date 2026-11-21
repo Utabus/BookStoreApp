@@ -190,6 +190,59 @@
             app:backgroundTint="@color/primary"
             app:cornerRadius="@dimen/radius_md" />
 
+        <!-- Quick Demo Login Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚡ Đăng nhập nhanh thử nghiệm (Demo):"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_xs" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnQuickDemoUser"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Khách: user@gmail.com"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/text_xs"
+                    app:cornerRadius="@dimen/radius_md"
+                    app:strokeColor="@color/primary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnQuickDemoAdmin"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Admin: admin@bookstore.vn"
+                    android:textColor="@color/status_discount"
+                    android:textSize="@dimen/text_xs"
+                    app:cornerRadius="@dimen/radius_md"
+                    app:strokeColor="@color/status_discount" />
+            </LinearLayout>
+        </LinearLayout>
+
         <!-- Divider -->
         <LinearLayout
             android:layout_width="match_parent"

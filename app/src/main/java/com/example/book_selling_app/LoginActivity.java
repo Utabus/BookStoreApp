@@ -31,6 +31,18 @@ public class LoginActivity extends AppCompatActivity {
     private void setupEvents() {
         binding.btnLogin.setOnClickListener(v -> handleLogin());
 
+        binding.btnQuickDemoUser.setOnClickListener(v -> {
+            binding.edtEmail.setText("user@gmail.com");
+            binding.edtPassword.setText("123456");
+            handleLogin();
+        });
+
+        binding.btnQuickDemoAdmin.setOnClickListener(v -> {
+            binding.edtEmail.setText("admin@bookstore.vn");
+            binding.edtPassword.setText("admin123");
+            handleLogin();
+        });
+
         binding.tvRegisterNow.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
